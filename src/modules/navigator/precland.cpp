@@ -59,6 +59,8 @@
 
 #define STATE_TIMEOUT 10000000 // [us] Maximum time to spend in any state
 
+#define SAFETY_DISTANCE 2
+
 PrecLand::PrecLand(Navigator *navigator) :
 	MissionBlock(navigator),
 	ModuleParams(navigator)
@@ -297,18 +299,18 @@ PrecLand::run_state_descend_above_target()
 	// check if target visible
 	if (!check_state_conditions(PrecLandState::DescendAboveTarget)) {
 		if (!switch_to_state_final_approach()) {
-			PX4_WARN("Lost landing target while landing (descending).");
-
-			// Stay at current position for searching for the target
-			pos_sp_triplet->current.lat = _navigator->get_global_position()->lat;
-			pos_sp_triplet->current.lon = _navigator->get_global_position()->lon;
-			pos_sp_triplet->current.alt = _navigator->get_global_position()->alt;
-
-			if (!switch_to_state_start()) {
-				if (!switch_to_state_fallback()) {
-					PX4_ERR("Can't switch to fallback landing");
-				}
-			}
+//			PX4_WARN("Lost landing target while landing (descending).");
+//
+//			// Stay at current position for searching for the target
+//			pos_sp_triplet->current.lat = _navigator->get_global_position()->lat;
+//			pos_sp_triplet->current.lon = _navigator->get_global_position()->lon;
+//			pos_sp_triplet->current.alt = _navigator->get_global_position()->alt;
+//
+//			if (!switch_to_state_start()) {
+//				if (!switch_to_state_fallback()) {
+//					PX4_ERR("Can't switch to fallback landing");
+//				}
+//			}
 		}
 
 		return;
@@ -320,8 +322,8 @@ PrecLand::run_state_descend_above_target()
 
 	pos_sp_triplet->current.lat = lat;
 	pos_sp_triplet->current.lon = lon;
-
-	pos_sp_triplet->current.type = position_setpoint_s::SETPOINT_TYPE_LAND;
+	pos_sp_triplet->current.alt = _navigator->get_global_position()->alt + SAFETY_DISTANCE - (_target_pose.z_rel);
+	pos_sp_triplet->current.type = position_setpoint_s::SETPOINT_TYPE_POSITION;
 
 	_navigator->set_position_setpoint_triplet_updated();
 }
@@ -521,7 +523,7 @@ bool PrecLand::check_state_conditions(PrecLandState state)
 
 	case PrecLandState::FinalApproach:
 		return _target_pose_valid && _target_pose.abs_pos_valid
-		       && (_target_pose.z_abs - vehicle_local_position->z) < _param_pld_fappr_alt.get();
+		       && (_target_pose.z_abs - vehicle_local_position->z) < _param_pld_fappr_alt.get() && 0; // NO NO NO
 
 	case PrecLandState::Search:
 		return true;
@@ -551,7 +553,8 @@ void PrecLand::slewrate(float &sp_x, float &sp_y)
 	if (!_last_slewrate_time) {
 		// running the first time since switching to precland
 
-		// assume dt will be about 50000us
+		// assume dt will be about 50000usmake px4_sitl gazebo_iris_irlock
+
 		dt = 50000 / SEC2USEC;
 
 		// set a best guess for previous setpoints for smooth transition
