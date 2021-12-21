@@ -91,3 +91,7 @@ rtps:
     send:    true
   - msg:     landing_target_pose
     send:    true
+  - msg:     drop_target_pose
+    receive: true
+  - msg:     vehicle_local_position
+    send:    true

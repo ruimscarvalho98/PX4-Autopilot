@@ -41,6 +41,7 @@
 
 #include <px4_platform_common/px4_config.h>
 #include <px4_platform_common/defines.h>
+#include <lib/conversion/rotation.h>
 #include <drivers/drv_hrt.h>
 
 #include "LandingTargetEstimator.h"
@@ -117,10 +118,14 @@ void LandingTargetEstimator::update()
 
 	// TODO account for sensor orientation as set by parameter
 	// default orientation has camera x pointing in body y, camera y in body -x
+	int32_t sens_rot = -1;
+	param_get(param_find("LTEST_SENS_ROT"), &sens_rot);
+	
+	//matrix::Dcm<float> _S_att = get_rot_matrix(static_cast<enum Rotation>(sens_rot));
 
 	matrix::Vector<float, 3> sensor_ray; // ray pointing towards target in body frame
-	sensor_ray(0) = -_irlockReport.pos_y * _params.scale_y; // forward
-	sensor_ray(1) = _irlockReport.pos_x * _params.scale_x; // right
+	sensor_ray(0) = _irlockReport.pos_x * _params.scale_x; 
+	sensor_ray(1) = _irlockReport.pos_y * _params.scale_y; 
 	sensor_ray(2) = 1.0f;
 
 	// rotate the unit ray into the navigation frame, assume sensor frame = body frame

@@ -58,6 +58,7 @@ set(msg_files
 	cpuload.msg
 	differential_pressure.msg
 	distance_sensor.msg
+	drop_target_pose.msg
 	ekf2_timestamps.msg
 	ekf_gps_drift.msg
 	esc_report.msg

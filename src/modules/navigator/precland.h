@@ -44,7 +44,7 @@
 #include <lib/geo/geo.h>
 #include <px4_platform_common/module_params.h>
 #include <uORB/Subscription.hpp>
-#include <uORB/topics/landing_target_pose.h>
+#include <uORB/topics/drop_target_pose.h>
 
 #include "navigator_mode.h"
 #include "mission_block.h"
@@ -105,9 +105,9 @@ private:
 	bool check_state_conditions(PrecLandState state);
 	void slewrate(float &sp_x, float &sp_y);
 
-	landing_target_pose_s _target_pose{}; /**< precision landing target position */
+	drop_target_pose_s _target_pose{}; /**< precision landing target position */
 
-	uORB::Subscription _target_pose_sub{ORB_ID(landing_target_pose)};
+	uORB::Subscription _target_pose_sub{ORB_ID(drop_target_pose)};
 	bool _target_pose_valid{false}; /**< whether we have received a landing target position message */
 	bool _target_pose_updated{false}; /**< wether the landing target position message is updated */
 

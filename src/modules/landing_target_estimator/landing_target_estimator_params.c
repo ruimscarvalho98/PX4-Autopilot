@@ -132,3 +132,24 @@ PARAM_DEFINE_FLOAT(LTEST_SCALE_X, 1.0f);
  * @group Landing target Estimator
  */
 PARAM_DEFINE_FLOAT(LTEST_SCALE_Y, 1.0f);
+
+/**
+ * Rotation of IRLOCK sensor relative to airframe
+ * 
+ * Default orientation of Yaw 270°
+ * 
+ * @value 0 No rotation
+ * @value 1 Yaw 45°
+ * @value 2 Yaw 90°
+ * @value 3 Yaw 135°
+ * @value 4 Yaw 180°
+ * @value 5 Yaw 225°
+ * @value 6 Yaw 270°
+ * @value 7 Yaw 315°
+ * 
+ * @min -1
+ * @max 40
+ * @reboot_required true
+ * @group Landing Target Estimator
+ */
+PARAM_DEFINE_INT32(LTEST_SENS_ROT, 6);
